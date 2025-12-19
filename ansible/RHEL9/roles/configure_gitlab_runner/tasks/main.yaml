@@ -1,0 +1,28 @@
+- name: Create GitLab group runner
+  ansible.builtin.shell: |
+    curl --silent --show-error --request POST "https://gitlab.com/api/v4/user/runners" \
+         --header "PRIVATE-TOKEN: {{ gitlab_personal_access_token }}" \
+         --form "runner_type=group_type" \
+         --form "group_id={{ gitlab_group_id }}" \
+         --form "description=Auto-registered by Ansible Automation Job" \
+         --form "tag_list=linux-runner,rhel-9" \
+         --form "maximum_timeout=1800"
+  register: gitlab_runner_create
+
+- name: Parse runner token from GitLab API response
+  ansible.builtin.set_fact:
+    gitlab_runner_auth_token: "{{ (gitlab_runner_create.stdout | from_json).token }}"
+
+- name: Register GitLab runner
+  ansible.builtin.command: >
+    gitlab-runner register
+      --non-interactive
+      --url "https://gitlab.com/"
+      --token "{{ gitlab_runner_auth_token }}"
+      --executor "shell"
+      --description "RHEL 9 Runner registered via Ansible Automation Job"
+  register: gitlab_runner_registration
+
+- name: Show registration result
+  ansible.builtin.debug:
+    var: gitlab_runner_registration.stdout

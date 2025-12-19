@@ -1,0 +1,9 @@
+---
+- name: Ensure the system package list is updated
+  ansible.builtin.yum:
+    update_cache: yes
+
+- name: Upgrade all installed packages to the latest version
+  ansible.builtin.yum:
+    name: '*'
+    state: latest

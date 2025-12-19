@@ -1,0 +1,7 @@
+plugin: amazon.aws.aws_ec2
+regions:
+  - "ap-southeast-1" # Modify as needed
+filters:
+  tag:IsAnsibleManagedRunner:
+    - "true"
+allow_duplicated_hosts: false

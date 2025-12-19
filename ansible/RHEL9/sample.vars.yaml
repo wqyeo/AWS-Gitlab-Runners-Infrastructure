@@ -1,0 +1,7 @@
+# Consider `ansible-vault create vars.yml`
+# See `inventory.aws_ec2.yml` for AWS region configuration.
+# See `ansible.cfg` to provide SSH Key file path.
+gitlab_personal_access_token: "your-sensitive-token-here"
+
+# curl --header "PRIVATE-TOKEN: <your_PAT_token> "https://gitlab.com/api/v4/groups?search=<your_group_name>"
+gitlab_group_id: 12345678

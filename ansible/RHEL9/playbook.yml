@@ -1,0 +1,11 @@
+---
+- name: Setup Instances to be Gitlab Runners
+  hosts: all
+  become: true
+  vars_files:
+    - vars.yaml
+
+  roles:
+    - update
+    - install_dependencies
+    - configure_gitlab_runner

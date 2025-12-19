@@ -33,9 +33,9 @@ variable "ssh_key_file_path" {
 variable "resources_tags" {
   description = "A map of tags to assign to AWS resources."
   type        = map(string)
-  default     = {
-    "role"     = "cicd-runners"
-    "env" = "dev"
+  default = {
+    "role" = "cicd-runners"
+    "env"  = "dev"
   }
 }
 

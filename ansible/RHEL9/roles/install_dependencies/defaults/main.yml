@@ -1,0 +1,13 @@
+---
+rhel_packages:
+  - git
+  - jq
+  - python3
+  - unzip
+  
+
+pip_packages:
+  - checkov
+
+# Permissions for downloaded binaries
+bin_perms: "0755"

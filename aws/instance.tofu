@@ -15,6 +15,7 @@ resource "aws_instance" "cicd-runner_os" {
   tags = merge(
     var.resources_tags,
     {
+      "IsAnsibleManagedRunner" = "true", # NOTE: Don't remove. For ansible to pickup the instances.
       "Name" = "${var.instance_name}-${count.index + 1}"
     }
   )

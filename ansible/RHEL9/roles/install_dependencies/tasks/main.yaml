@@ -1,0 +1,109 @@
+---
+- name: Ensure RHEL packages are installed
+  ansible.builtin.yum:
+    name: "{{ rhel_packages }}"
+    state: present
+
+- name: Ensure pip is installed
+  ansible.builtin.yum:
+    name: python3-pip
+    state: present
+
+- name: Install Python pip packages
+  ansible.builtin.pip:
+    name: "{{ pip_packages }}"
+    executable: pip3
+
+- name: Download helm
+  ansible.builtin.get_url:
+    url: "https://get.helm.sh/helm-v4.0.4-linux-amd64.tar.gz"
+    dest: "/tmp/helm.tar.gz"
+    mode: "0644"
+
+- name: Extract helm
+  ansible.builtin.unarchive:
+    src: "/tmp/helm.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Install helm
+  ansible.builtin.copy:
+    src: "/tmp/linux-amd64/helm"
+    dest: "/usr/local/bin/helm"
+    mode: "0755"
+    remote_src: yes
+
+- name: Download kubectl
+  ansible.builtin.get_url:
+    url: "https://dl.k8s.io/release/v1.35.0/bin/linux/amd64/kubectl"
+    dest: "/tmp/kubectl"
+    mode: "{{ bin_perms }}"
+
+- name: Install kubectl
+  ansible.builtin.command:
+    cmd: install -o root -g root -m 0755 /tmp/kubectl /usr/local/bin/kubectl
+    creates: "/usr/local/bin/kubectl"
+
+- name: Download kubesec
+  ansible.builtin.get_url:
+    url: "https://github.com/controlplaneio/kubesec/releases/download/v2.14.2/kubesec_linux_amd64.tar.gz"
+    dest: "/tmp/kubesec.tar.gz"
+    mode: "0644"
+
+- name: Extract kubesec
+  ansible.builtin.unarchive:
+    src: "/tmp/kubesec.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Install kubesec
+  ansible.builtin.copy:
+    src: "/tmp/kubesec"
+    dest: "/usr/local/bin/kubesec"
+    mode: "0755"
+    remote_src: yes
+
+- name: Download AWS CLI installer
+  ansible.builtin.get_url:
+    url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+    dest: "/tmp/awscliv2.zip"
+    mode: "0644"
+
+- name: Extract AWS CLI installer
+  ansible.builtin.unarchive:
+    src: "/tmp/awscliv2.zip"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Install AWS CLI
+  ansible.builtin.command:
+    cmd: /tmp/aws/install
+    creates: "/usr/local/bin/aws"
+
+- name: Add Trivy repository
+  ansible.builtin.yum_repository:
+    name: trivy
+    description: Trivy repository
+    baseurl: https://aquasecurity.github.io/trivy-repo/rpm/releases/$basearch/
+    gpgcheck: yes
+    enabled: yes
+    gpgkey: https://aquasecurity.github.io/trivy-repo/rpm/public.key
+
+- name: Update yum cache
+  ansible.builtin.yum:
+    update_cache: yes
+
+- name: Install trivy
+  ansible.builtin.yum:
+    name: trivy
+    state: present
+
+- name: Add GitLab Runner repository
+  ansible.builtin.shell:
+    cmd: curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh" | bash
+    creates: "/etc/yum.repos.d/runner_gitlab-runner.repo"
+
+- name: Install GitLab Runner
+  ansible.builtin.yum:
+    name: gitlab-runner
+    state: present
