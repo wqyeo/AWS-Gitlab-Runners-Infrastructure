@@ -1,0 +1,19 @@
+---
+- name: Download kubesec
+  ansible.builtin.get_url:
+    url: "https://github.com/controlplaneio/kubesec/releases/download/v2.14.2/kubesec_linux_amd64.tar.gz"
+    dest: "/tmp/kubesec.tar.gz"
+    mode: "0644"
+
+- name: Extract kubesec
+  ansible.builtin.unarchive:
+    src: "/tmp/kubesec.tar.gz"
+    dest: "/tmp"
+    remote_src: yes
+
+- name: Install kubesec
+  ansible.builtin.copy:
+    src: "/tmp/kubesec"
+    dest: "/usr/local/bin/kubesec"
+    mode: "0755"
+    remote_src: yes

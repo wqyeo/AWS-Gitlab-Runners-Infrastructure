@@ -1,0 +1,15 @@
+---
+- name: Ensure RHEL packages are installed
+  ansible.builtin.yum:
+    name: "{{ rhel_packages }}"
+    state: present
+
+- name: Ensure pip is installed
+  ansible.builtin.yum:
+    name: python3-pip
+    state: present
+
+- name: Install Python pip packages
+  ansible.builtin.pip:
+    name: "{{ pip_packages }}"
+    executable: pip3
