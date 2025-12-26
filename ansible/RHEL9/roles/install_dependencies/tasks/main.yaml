@@ -20,5 +20,8 @@
 - name: Install Trivy
   ansible.builtin.include_tasks: trivy.yaml
 
+- name: Install Terraform
+  ansible.builtin.include_tasks: terraform.yaml
+
 - name: Install GitLab Runner
   ansible.builtin.include_tasks: gitlab_runner.yaml
